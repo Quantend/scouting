@@ -21,7 +21,7 @@
         </div>
 
         <div class="mb-4">
-            <label class="font-medium text-gray-700 dark:text-gray-300">Bedrag:</label>
+            <label class="font-medium text-gray-700 dark:text-gray-300">Opbrengst:</label>
             <input type="text" wire:model="money" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="Voer bedrag in">
             @error('money') <span class="text-red-500">{{ $message }}</span> @enderror
         </div>
@@ -35,7 +35,7 @@
         <thead>
         <tr class="bg-gray-200 dark:bg-gray-800">
             <th class="p-2 text-gray-700 dark:text-white">Titel</th>
-            <th class="p-2 text-gray-700 dark:text-white">Bedrag</th>
+            <th class="p-2 text-gray-700 dark:text-white">Opbrengst</th>
             <th class="p-2 text-gray-700 dark:text-white">Acties</th>
         </tr>
         </thead>
