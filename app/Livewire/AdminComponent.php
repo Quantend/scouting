@@ -10,6 +10,7 @@ class AdminComponent extends Component
     public $users;
     public $searchEmail;
     public $confirmDelete;
+    public $confirmDeleteUser;
     public $confirmSuperAdmin;
     public $selectedUserId;
     public $selectedUserName;
@@ -86,15 +87,26 @@ class AdminComponent extends Component
         $this->selectedUserName = '';
     }
 
-    public function deleteUser($userId)
+    public function confirmDeleteSelectedUser($userId, $userName)
     {
-        $user = User::find($userId);
-            $user->delete();
+        $this->selectedUserId = $userId;
+        $this->selectedUserName = $userName;
+        $this->confirmDeleteUser = true;
+    }
+
+    public function deleteUser()
+    {
+        $this->selectedUserId = User::find($this->selectedUserId);
+        $this->selectedUserId->delete();
 
             // Refresh user list after deletion
             $this->users = User::all();
 
             session()->flash('message', 'User deleted successfully.');
+
+        $this->selectedUserId = '';
+        $this->selectedUserName = '';
+        $this->confirmDeleteUser = false;
     }
 
     public function confirmDeleteAll()
@@ -108,7 +120,10 @@ class AdminComponent extends Component
 
     public function toggleConfirmDelete()
     {
+        $this->selectedUserId = '';
+        $this->selectedUserName = '';
         $this->confirmDelete = false;
+        $this->confirmDeleteUser = false;
     }
 
     public function deleteAllNonAdminUsers()

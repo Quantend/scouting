@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class MemberComponent extends Component
 {
     public $name;
+    public $nameTasks;
     public $member_id;
     public $isEdit = false;
     public $viewTasks = false; // Flag to toggle task view
@@ -101,7 +102,7 @@ class MemberComponent extends Component
     public function viewTasksFunc($memberId)
     {
         $member = Member::findOrFail($memberId);
-        $this->name = $member->name;
+        $this->nameTasks = $member->name;
 
         // Query to get the tasks and total hours for a specific member, grouped by task_id
         $this->tasksWithHours = Hours::where('member_id', $memberId)

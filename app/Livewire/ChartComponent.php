@@ -15,6 +15,7 @@ class ChartComponent extends Component
     public $requiredMoney;
     public $totalRequiredMoney;
     public $viewChart = false;
+    public $showInfo = false;
 
     public function mount()
     {
@@ -57,6 +58,12 @@ class ChartComponent extends Component
         }
 
         $this->viewChart = true;
+    }
+
+    public function toggleInfo()
+    {
+        $this->showInfo = !$this->showInfo;
+        $this->calculateChart();
     }
 
     public function render()

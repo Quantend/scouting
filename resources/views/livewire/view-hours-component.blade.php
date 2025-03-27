@@ -30,9 +30,19 @@
     </div>
 
     <div class="mb-4">
+        <label for="dateSelect" class="block font-medium text-gray-700 dark:text-gray-300">Selecteer Datum:</label>
+        <input type="date" wire:model="selectedDate" id="dateSelect"
+                class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
+    </div>
+
+    <div class="mb-4 space-x-2">
         <button wire:click="filterHours"
                 class="cursor-pointer bg-blue-500 text-white p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            Filter Uren
+            Filter
+        </button>
+        <button wire:click="resetFilters"
+                class="cursor-pointer bg-blue-500 text-white p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Reset Filter
         </button>
     </div>
 

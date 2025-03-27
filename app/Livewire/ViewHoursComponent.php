@@ -10,7 +10,7 @@ use App\Models\Task;
 class ViewHoursComponent extends Component
 {
     public $members, $tasks, $hours, $hoursInput;
-    public $selectedMember = null, $selectedTask = null;
+    public $selectedMember = null, $selectedTask = null, $selectedDate = null;
     public $hourToDelete = null;
 
     // Fields for editing
@@ -57,8 +57,21 @@ class ViewHoursComponent extends Component
             $query->where('task_id', $this->selectedTask);
         }
 
+        if ($this->selectedDate) {
+            $query->whereDate('date', $this->selectedDate);
+        }
+
         // Eager load the member and task relationships
         $this->hours = $query->with(['member', 'task'])->get();
+    }
+
+    public function resetFilters()
+    {
+        $this->selectedMember = null;
+        $this->selectedTask = null;
+        $this->selectedDate = null;
+
+        $this->hours = Hours::query()->get();
     }
 
     // Edit a specific hour entry

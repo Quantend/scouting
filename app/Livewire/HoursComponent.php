@@ -55,7 +55,7 @@ class HoursComponent extends Component
             'date' => $this->date,
         ]);
 
-        session()->flash('message', 'Hours registered successfully.');
+        session()->flash('message', 'Uren succesvol geregistreerd.');
 
         // Reset the fields after storing
         $this->resetFields();
