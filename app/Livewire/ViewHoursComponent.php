@@ -23,7 +23,7 @@ class ViewHoursComponent extends Component
         $this->tasks = Task::all();
 
         // Initially load all hours
-        $this->hours = Hours::with(['member', 'task'])->get();
+        $this->hours = Hours::with(['member', 'task'])->get()->sortBy('date');
     }
 
     public function updatedHoursInput($value)
@@ -62,7 +62,7 @@ class ViewHoursComponent extends Component
         }
 
         // Eager load the member and task relationships
-        $this->hours = $query->with(['member', 'task'])->get();
+        $this->hours = $query->with(['member', 'task'])->get()->sortBy('date');
     }
 
     public function resetFilters()

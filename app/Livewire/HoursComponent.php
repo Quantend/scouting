@@ -44,7 +44,7 @@ class HoursComponent extends Component
         $this->validate([
             'member_id' => 'required|exists:members,id',
             'task_id' => 'required|exists:tasks,id',
-            'hours' => 'required|numeric|min:0.1',
+            'hours' => 'required|numeric|min:0.01',
             'date' => 'required|date',
         ]);
 

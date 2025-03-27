@@ -110,18 +110,18 @@
         </div>
     @endif
 
-    <!-- Weergave van taken en totaal aantal uren -->
+    <!-- Weergave van kulssen en totaal aantal uren -->
     @if ($viewTasks)
         <div class="mt-4">
-            <h3 class="mb-4 text-xl font-semibold text-gray-700 dark:text-white">Taken en Totaal Uren
+            <h3 class="mb-4 text-xl font-semibold text-gray-700 dark:text-white">Klussen en Totaal Uren
                 voor {{$nameTasks}}</h3>
             <button wire:click="hideTasks()"
-                    class="cursor-pointer bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Verberg Taken
+                    class="cursor-pointer bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Verberg Klussen
             </button>
             <table class="w-full mt-2 border dark:bg-gray-700 dark:border-gray-600">
                 <thead>
                 <tr class="bg-gray-200 dark:bg-gray-800">
-                    <th class="p-2 text-gray-700 dark:text-white">Taak Titel</th>
+                    <th class="p-2 text-gray-700 dark:text-white">Klus Titel</th>
                     <th class="p-2 text-gray-700 dark:text-white">Totaal Uren</th>
                 </tr>
                 </thead>
@@ -133,7 +133,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="2" class="p-2 text-center text-gray-700 dark:text-white">Geen taken gevonden voor
+                        <td colspan="2" class="p-2 text-center text-gray-700 dark:text-white">Geen klussen gevonden voor
                             dit lid.
                         </td>
                     </tr>

@@ -64,7 +64,9 @@
                 <tbody>
                 @foreach ($hours as $hour)
                     <tr class="border-t dark:border-gray-600">
-                        <td class="p-2 text-center text-gray-700 dark:text-white">{{ $hour->date }}</td>
+                        <td class="p-2 text-center text-gray-700 dark:text-white">
+                            {{ \Carbon\Carbon::parse($hour->date)->format('d-m-Y') }}
+                        </td>
                         <td class="p-2 text-center text-gray-700 dark:text-white">{{ optional($hour->member)->name ?? 'Geen Lid' }}</td>
                         <td class="p-2 text-center text-gray-700 dark:text-white">{{ optional($hour->task)->title ?? 'Geen Klus' }}</td>
                         <td class="p-2 text-center text-gray-700 dark:text-white">{{ number_format($hour->hours, 2) }}</td>

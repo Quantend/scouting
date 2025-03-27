@@ -20,9 +20,9 @@
         </div>
 
         <div class="mb-4">
-            <label class="font-medium text-gray-700 dark:text-gray-300">Taak:</label>
+            <label class="font-medium text-gray-700 dark:text-gray-300">Klus:</label>
             <select wire:model="task_id" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                <option value="">Selecteer Taak</option>
+                <option value="">Selecteer Klus</option>
                 @foreach ($tasks as $task)
                     <option value="{{ $task->id }}">{{ $task->title }}</option>
                 @endforeach
@@ -31,7 +31,7 @@
         </div>
 
         <div class="mb-4">
-            <label class="font-medium text-gray-700 dark:text-gray-300">Uren: (hh:mm)</label>
+            <label class="font-medium text-gray-700 dark:text-gray-300">Uren: (uu:mm)</label>
             <input type="time" wire:model="hoursInput" class="border rounded p-2 w-full dark:bg-gray-700 dark:text-white dark:border-gray-600" placeholder="Voer uren in (bijv. 01:30)">
             @error('hoursInput') <span class="text-red-500">{{ $message }}</span> @enderror
         </div>

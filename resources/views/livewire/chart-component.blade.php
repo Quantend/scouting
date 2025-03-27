@@ -14,26 +14,53 @@
 
 
     <div class="mt-6">
-        <div class="flex items-center">
+        <div class="flex items-center space-x-4">
             <label class="block font-medium text-gray-700 dark:text-gray-300 text-lg">
                 Bereken Betaling Totaal
             </label>
             <flux:navlist.item class="max-w-10">
-                <span class="text-2xl text-blue-500 cursor-pointer" wire:click="toggleInfo()">
-                    <flux:icon name="information-circle"/>
-                </span>
+            <span class="text-2xl text-blue-500 cursor-pointer" wire:click="toggleInfo()">
+                <flux:icon name="information-circle"/>
+            </span>
             </flux:navlist.item>
         </div>
-        <input
-            class="w-full p-3 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            wire:model="requiredMoney" placeholder="Vul het vereiste bedrag in">
+
+        <div class="flex space-x-2 mt-2">
+            <!-- Vereist bedrag -->
+            <div class="w-1/3">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Totaal €</label>
+                <input
+                    class="w-full p-2 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    wire:model="requiredMoney">
+            </div>
+
+            <!-- Schaalfactor -->
+            <div class="w-1/4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Schaal</label>
+                <input
+                    type="number" step="0.1"
+                    class="w-full p-2 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    wire:model="scalingFactor">
+            </div>
+
+            <!-- Basisbetaling -->
+            <div class="w-1/4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Min. €</label>
+                <input
+                    type="number"
+                    class="w-full p-2 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    wire:model="basePayment">
+            </div>
+        </div>
+
         <button wire:click="calculateChart()"
                 class="cursor-pointer mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
             Bereken Grafiek
         </button>
     </div>
 
-    @if($viewChart)
+
+@if($viewChart)
         <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mt-6">Betalingsgrafiek</h2>
 
         <!-- Bar Chart -->
@@ -53,7 +80,24 @@
 
     @if($showInfo)
         <div class="fixed top-15 right-2 ml-2 bg-white shadow-lg p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
-            <p class="text-gray-700 dark:text-gray-300">Voer het totaal bedrag in dat nodig is voor het kamp, de grafiek berekent hoeveel elk lid moet betalen aan de hand van gewerkte uren per lid.</p>
+            <p class="text-gray-700 dark:text-gray-300">
+                De grafiek berekent hoeveel elk lid moet betalen op basis van het aantal gewerkte uren per lid en het totaal vereiste bedrag.
+                <br><br>
+                <strong>Totaal €:</strong> <br>
+                Het totaalbedrag dat nodig is om het kamp te dekken.<br>
+                Dit is het bedrag dat over de leden wordt verdeeld op basis van hun gewerkte uren.
+                <br><br>
+                <strong>Schaal:</strong> <br>
+                De schaalfactor bepaalt hoeveel invloed het aantal gewerkte uren heeft op het bedrag dat een lid moet betalen.<br>
+                Hoe meer uren een lid heeft gewerkt, hoe minder dat lid hoeft te betalen.<br>
+                Dit zorgt ervoor dat leden die meer bijdragen door werk, minder betalen.
+                <br><br>
+                <strong>Min. €:</strong> <br>
+                Het minimaal te betalen bedrag voor elk lid. <br>
+                Dit zorgt ervoor dat niemand minder betaalt dan dit bedrag, <br>
+                zelfs als hun aandeel op basis van gewerkte uren lager is dan dit minimum. <br>
+                Dit bedrag wordt afgedwongen als een vloer voor de betalingen.
+            </p>
             <button class="mt-2 text-blue-500 cursor-pointer" wire:click="toggleInfo()">Sluiten</button>
         </div>
     @endif
