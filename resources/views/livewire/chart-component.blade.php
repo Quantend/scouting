@@ -60,17 +60,23 @@
     </div>
 
 
-@if($viewChart)
+    @if($viewChart)
         <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mt-6">Betalingsgrafiek</h2>
 
         <!-- Bar Chart -->
         <div class="mt-4 space-y-4">
+            @php
+                // Zoek de persoon die het meeste moet betalen
+                $maxPayment = $totalHoursMember->max('moneyToPay');
+            @endphp
             @foreach($totalHoursMember as $data)
                 <div class="flex items-center justify-between">
                     <span class="font-medium text-gray-700 dark:text-white min-w-20">{{ $data->name }}</span>
-                    <div class="w-full bg-gray-200 dark:bg-gray-600 h-3 rounded-lg relative">
-                        <div class="absolute top-0 left-0 h-3 bg-green-500 rounded-lg"
+                    <div class="w-full bg-gray-200 dark:bg-gray-600 h-4 rounded-lg relative">
+                        <div class="absolute top-0 left-0 h-2 bg-green-500 rounded-lg"
                              style="width: {{ $data->moneyToPay / $requiredMoney * 100 }}%"></div>
+                        <div class="absolute top-2 left-0 h-2 bg-red-500 rounded-lg"
+                             style="width: {{ ($data->moneyToPay / $maxPayment) * 100 }}%"></div>
                     </div>
                     <span class="w-20 text-gray-600 dark:text-gray-300 text-right min-w-20">{{ number_format($data->moneyToPay, 2) }}€</span>
                 </div>
