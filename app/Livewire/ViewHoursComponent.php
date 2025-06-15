@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Hours;
 use App\Models\Member;
 use App\Models\Task;
@@ -23,7 +25,7 @@ class ViewHoursComponent extends Component
         $this->tasks = Task::all();
 
         // Initially load all hours
-        $this->hours = Hours::with(['member', 'task'])->get()->sortBy('date');
+        $this->hours = Hours::with(['member', 'task'])->get()->sortByDesc('date');
     }
 
     public function updatedHoursInput($value)
@@ -62,7 +64,7 @@ class ViewHoursComponent extends Component
         }
 
         // Eager load the member and task relationships
-        $this->hours = $query->with(['member', 'task'])->get()->sortBy('date');
+        $this->hours = $query->with(['member', 'task'])->get()->sortByDesc('date');
     }
 
     public function resetFilters()
@@ -96,7 +98,6 @@ class ViewHoursComponent extends Component
     // Update the hour entry
     public function updateHour()
     {
-        // Validate the data
         $this->validate([
             'editMemberId' => 'required|exists:members,id',
             'editTaskId' => 'required|exists:tasks,id',
@@ -104,8 +105,19 @@ class ViewHoursComponent extends Component
             'editDate' => 'required|date',
         ]);
 
-        // Find and update the hour record
-        $hour = Hours::find($this->editHourId);
+        $hour = Hours::findOrFail($this->editHourId);
+
+        // Save old values
+        $oldMember = Member::find($hour->member_id)?->name ?? 'Onbekend';
+        $oldTask = Task::find($hour->task_id)?->title ?? 'Onbekend';
+        $oldHours = $hour->hours;
+        $oldDate = $hour->date;
+
+        // Nieuwe waardes ophalen
+        $newMember = Member::find($this->editMemberId)?->name ?? 'Onbekend';
+        $newTask = Task::find($this->editTaskId)?->title ?? 'Onbekend';
+
+        // Update the record
         $hour->update([
             'member_id' => $this->editMemberId,
             'task_id' => $this->editTaskId,
@@ -113,9 +125,26 @@ class ViewHoursComponent extends Component
             'date' => $this->editDate,
         ]);
 
-        // Reset edit fields and reload data
+        // Log only if something changed
+        if (
+            $oldMember !== $newMember ||
+            $oldTask !== $newTask ||
+            $oldHours != $this->editHours ||
+            $oldDate != $this->editDate
+        ) {
+            Log::create([
+                'user_id' => Auth::id(),
+                'type' => 'Updated hour entry',
+                'log' => "Updated hour ID {$hour->id}: member {$oldMember} → {$newMember}, task {$oldTask} → {$newTask}, hours {$oldHours} → {$this->editHours}, date {$oldDate} → {$this->editDate}",
+            ]);
+
+            session()->flash('message', 'Uur succesvol bijgewerkt.');
+        } else {
+            session()->flash('message', 'Geen wijzigingen gedetecteerd.');
+        }
+
         $this->resetEditFields();
-        $this->filterHours();  // Re-filter hours based on existing filters
+        $this->filterHours();
     }
 
     public function confirmDelete($hourId)
@@ -133,7 +162,22 @@ class ViewHoursComponent extends Component
     public function delete($id)
     {
         // Find and delete the hour record
-        Hours::find($id)->delete();
+        $hour = Hours::find($id);
+
+        // Fetch related data before deleting
+        $memberName = Member::find($hour->member_id)?->name ?? 'Unknown';
+        $taskTitle = Task::find($hour->task_id)?->title ?? 'Unknown';
+        $hours = $hour->hours;
+        $date = $hour->date;
+
+        $hour->delete();
+
+        // Log the deletion
+        Log::create([
+            'user_id' => Auth::id(),
+            'type' => 'Deleted hour entry',
+            'log' => "Deleted hour ID: $id, member: {$memberName}, task: {$taskTitle}, hours: {$hours}, date: {$date}.",
+        ]);
 
         // Optionally, you can add a session flash message
         session()->flash('message', 'Hour deleted successfully.');

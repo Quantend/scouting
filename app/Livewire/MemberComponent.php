@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
 use App\Models\Hours;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +48,12 @@ class MemberComponent extends Component
             'name' => $this->name,
         ]);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'type' => 'Created member',
+            'log' => "Created member: $this->name",
+        ]);
+
         session()->flash('message', 'Lid succesvol aangemaakt.');
         $this->resetFields();
     }
@@ -65,9 +73,22 @@ class MemberComponent extends Component
         ]);
 
         $member = Member::findOrFail($this->member_id);
+        $oldName = $member->name;
+
         $member->update([
             'name' => $this->name,
         ]);
+
+        if($oldName != $member->name){
+            Log::create([
+                'user_id' => Auth::id(),
+                'type' => 'Updated member',
+                'log' => "Updated member: $oldName → $this->name",
+            ]);
+            session()->flash('message', 'Lid succesvol bijgewerkt.');
+        } else {
+            session()->flash('message', 'Geen wijzigen gedetecteerd.');
+        }
 
         session()->flash('message', 'Lid succesvol bijgewerkt.');
         $this->resetFields();
@@ -94,7 +115,15 @@ class MemberComponent extends Component
 
     public function delete($id)
     {
-        Member::findOrFail($id)->delete();
+        $member = Member::findOrFail($id);
+        $memberName = $member->name;
+        $member->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'type' => 'Deleted member',
+            'log' => "Deleted member ID: $id, name: $memberName",
+        ]);
         session()->flash('message', 'Lid succesvol verwijderd.');
     }
 

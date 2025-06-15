@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Log;
 use App\Models\Member;
 use App\Models\Task;
 use App\Models\Hours; // Assuming you have an Hour model
@@ -54,6 +56,17 @@ class HoursComponent extends Component
             'hours' => $this->hours,
             'date' => $this->date,
         ]);
+
+        if (Auth::check()) {
+            $member = Member::find($this->member_id);
+            $task = Task::find($this->task_id);
+
+            Log::create([
+                'user_id' => Auth::id(),
+                'type' => "Registered hours",
+                'log' => "Registered {$this->hours} hour(s) for member '{$member->name}' on task '{$task->title}' for date {$this->date}.",
+            ]);
+        }
 
         session()->flash('message', 'Uren succesvol geregistreerd.');
 

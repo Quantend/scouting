@@ -27,8 +27,6 @@ new class extends Component {
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-
             'email' => [
                 'required',
                 'string',
@@ -38,6 +36,9 @@ new class extends Component {
                 Rule::unique(User::class)->ignore($user->id)
             ],
         ]);
+
+        // Force the original name from the authenticated user
+        $validated['name'] = $user->name;
 
         $user->fill($validated);
 
@@ -49,6 +50,7 @@ new class extends Component {
 
         $this->dispatch('profile-updated', name: $user->name);
     }
+
 
     /**
      * Send an email verification notification to the current user.
@@ -74,7 +76,8 @@ new class extends Component {
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <p>(voor logging purposes kan de naam niet worden aangepast (of vraag Dylan als het echt nodig is))</p>
+            <flux:input disabled wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />

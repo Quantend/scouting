@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Hours;
+use App\Models\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use App\Models\Task;
@@ -45,6 +47,12 @@ class TaskComponent extends Component
             'money' => empty($this->money) ? 0 : $this->money,
         ]);
 
+        Log::create([
+            'user_id' => Auth::id(),
+            'type' => 'Created task',
+            'log' => "Created task: $this->title, money: $this->money",
+        ]);
+
         session()->flash('message', 'Klus succesvol aangemaakt.');
         $this->resetFields();
     }
@@ -66,12 +74,26 @@ class TaskComponent extends Component
         ]);
 
         $task = Task::findOrFail($this->task_id);
+        $oldTitle = $task->title;
+        $oldMoney = $task->money;
+
         $task->update([
             'title' => $this->title,
             'money' => empty($this->money) ? 0 : $this->money,
         ]);
 
-        session()->flash('message', 'Klus succesvol bijgewerkt.');
+        if ($oldTitle != $task->title || $oldMoney != $task->money) {
+            Log::create([
+                'user_id' => Auth::id(),
+                'type' => 'Updated title',
+                'log' => "Updated title: $oldTitle → $this->title, money: $oldMoney → $this->money",
+            ]);
+
+            session()->flash('message', 'Klus succesvol bijgewerkt.');
+        } else {
+            session()->flash('message', 'Geen wijzigen gedetecteerd.');
+        }
+
         $this->resetFields();
     }
 
@@ -96,7 +118,16 @@ class TaskComponent extends Component
 
     public function delete($id)
     {
-        Task::findOrFail($id)->delete();
+        $task = Task::findOrFail($id);
+        $taskTitle = $task->title;
+        $task->delete();
+
+        Log::create([
+            'user_id' => Auth::id(),
+            'type' => 'Deleted member',
+            'log' => "Deleted task ID: $id, title: $taskTitle",
+        ]);
+
         session()->flash('message', 'Klus succesvol verwijderd.');
     }
 

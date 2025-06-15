@@ -16,7 +16,19 @@ new class extends Component {
             'password' => ['required', 'string', 'current_password'],
         ]);
 
-        tap(Auth::user(), $logout(...))->delete();
+        $user = Auth::user();
+
+        if ($user->is_admin === 1 || $user->is_super_admin === 1) {
+            // Mark as deleted instead of actual deletion
+            $user->is_deleted = 1;
+            $user->save();
+
+            // Log out the user
+            $logout($user);
+        } else {
+            // Permanently delete the user
+            tap($user, $logout(...))->delete();
+        }
 
         $this->redirect('/', navigate: true);
     }

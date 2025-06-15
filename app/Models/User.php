@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'is_super_admin',
+        'is_deleted',
     ];
 
     /**
@@ -58,5 +59,10 @@ class User extends Authenticatable
             ->explode(' ')
             ->map(fn (string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(Log::class);
     }
 }

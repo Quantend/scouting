@@ -19,7 +19,7 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::group(['middleware' => function ($request, $next) {
-    if (!Auth::check() || Auth::user()->is_admin !== 1) {
+    if (!Auth::check() || (Auth::user()->is_admin !== 1 || Auth::user()->is_deleted === 1)) {
         abort(403, 'Unauthorized access');
     }
     return $next($request);
@@ -32,7 +32,7 @@ Route::group(['middleware' => function ($request, $next) {
 });
 
 Route::group(['middleware' => function ($request, $next) {
-    if (!Auth::check() || Auth::user()->is_super_admin !== 1) {
+    if (!Auth::check() || (Auth::user()->is_super_admin !== 1 || Auth::user()->is_deleted === 1)) {
         return redirect()->route('dashboard');
     }
     return $next($request);

@@ -24,6 +24,17 @@ class DashboardComponent extends Component
         $user = Auth::user(); // Get the currently authenticated user
         $this->isAdmin = $user && $user->is_admin; // Set isAdmin to true if the user is an admin
 
+        // Logs out deleted users
+        if ($user && $user->is_deleted) {
+            Auth::logout();
+
+            // Optional: Invalidate the session and regenerate token
+            session()->invalidate();
+            session()->regenerateToken();
+
+            return redirect()->route('/');
+        }
+
         $this->totalHours = Hours::sum('hours');
         $this->totalMoney = Task::sum('money');
 

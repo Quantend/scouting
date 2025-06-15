@@ -94,20 +94,35 @@ class AdminComponent extends Component
         $this->confirmDeleteUser = true;
     }
 
-    public function deleteUser()
+    public function deleteUser($userID)
     {
-        $this->selectedUserId = User::find($this->selectedUserId);
-        $this->selectedUserId->delete();
+        $user = User::find($userID);
 
-            // Refresh user list after deletion
+        if ($user) {
+            if ($user->is_admin) {
+                // Mark admin users as "deleted"
+                $user->is_deleted = true;
+                $user->save();
+
+                session()->flash('message', 'Admin user marked as deleted.');
+            } else {
+                // Delete non-admin users normally
+                $user->delete();
+
+                session()->flash('message', 'User deleted successfully.');
+            }
+
+            // Refresh user list after update/deletion
             $this->users = User::all();
-
-            session()->flash('message', 'User deleted successfully.');
+        } else {
+            session()->flash('error', 'User not found.');
+        }
 
         $this->selectedUserId = '';
         $this->selectedUserName = '';
         $this->confirmDeleteUser = false;
     }
+
 
     public function confirmDeleteAll()
     {

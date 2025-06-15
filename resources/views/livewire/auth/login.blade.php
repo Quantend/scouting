@@ -29,7 +29,20 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        // Check if user exists and is marked as deleted
+        $user = \App\Models\User::where('email', $this->email)->first();
+
+        if ($user && $user->is_deleted) {
+            Session::flash('status', __('Your account has been disabled.'));
+            return;
+        }
+
+        // Normal login
+        if (! Auth::attempt([
+            'email' => $this->email,
+            'password' => $this->password,
+            'is_deleted' => 0,
+        ], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -77,7 +90,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
 
     <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
+    @if (session('status'))
+        <div class="text-center text-sm text-red-600 dark:text-red-400">
+            {{ session('status') }}
+        </div>
+    @endif
 
     <form wire:submit="login" class="flex flex-col gap-6">
         <!-- Email Address -->
