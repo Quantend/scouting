@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Log;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -47,9 +48,17 @@ class LogsComponent extends Component
 
     public function clearAllLogs()
     {
+        $user = Auth::user();
         // Optional: wrap in a transaction for safety
-        DB::transaction(function () {
+        DB::transaction(function () use ($user) {
             Log::truncate(); // This deletes all rows efficiently
+
+            // Recreate a log stating that logs were cleared
+            Log::create([
+                'user_id' => $user->id,
+                'type' => 'Cleared Logs',
+                'log' => 'All logs were cleared by ' . ($user->name ?? 'unknown user'),
+            ]);
         });
 
         session()->flash('message', 'All logs have been cleared.');
