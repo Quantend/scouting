@@ -32,7 +32,7 @@ class DashboardComponent extends Component
             session()->invalidate();
             session()->regenerateToken();
 
-            return redirect()->route('/');
+            return redirect()->route('/register');
         }
 
         $this->totalHours = Hours::sum('hours');

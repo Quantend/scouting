@@ -104,6 +104,10 @@
                                     class="cursor-pointer bg-green-500 text-white p-2 rounded hover:bg-green-600">
                                 <flux:icon icon="arrow-uturn-left" class="text-white"></flux:icon>
                             </button>
+                            <button wire:click="deleteUser({{ $user->id }})"
+                                    class="cursor-pointer bg-red-500 text-white p-2 rounded hover:bg-red-600 ml-1">
+                                <flux:icon icon="trash" class="text-white"></flux:icon>
+                            </button>
                         @else
                             <button wire:click="deleteUser({{ $user->id }})"
                                     class="cursor-pointer bg-red-500 text-white p-2 rounded hover:bg-red-600">

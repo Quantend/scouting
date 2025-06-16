@@ -119,7 +119,7 @@ class AdminComponent extends Component
         $user = User::find($userID);
 
         if ($user) {
-            if ($user->is_admin) {
+            if ($user->is_admin && !$this->showDeleted) {
                 // Mark admin users as "deleted"
                 $user->is_deleted = true;
                 $user->save();
@@ -129,7 +129,11 @@ class AdminComponent extends Component
                 // Delete non-admin users normally
                 $user->delete();
 
-                session()->flash('message', 'User deleted successfully.');
+                if ($this->showDeleted){
+                    session()->flash('message', 'Admin User deleted successfully.');
+                } else{
+                    session()->flash('message', 'User deleted successfully.');
+                }
             }
 
             // Refresh user list after update/deletion
