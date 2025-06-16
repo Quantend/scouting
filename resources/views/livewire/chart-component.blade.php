@@ -85,24 +85,24 @@
     @endif
 
     @if($showInfo)
-        <div class="fixed top-15 right-2 ml-2 bg-white shadow-lg p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700">
+        <div wire:click="toggleInfo()"
+             class="fixed top-1 right-2 ml-2 bg-white shadow-lg p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 z-50">
             <p class="text-gray-700 dark:text-gray-300">
-                De grafiek berekent hoeveel elk lid moet betalen op basis van het aantal gewerkte uren per lid en het totaal vereiste bedrag.
+                De grafiek berekent hoeveel elk lid moet betalen op basis van het aantal gewerkte uren per lid en het
+                totaal vereiste bedrag.
                 <br><br>
                 <strong>Totaal €:</strong> <br>
-                Het totaalbedrag dat nodig is om het kamp te dekken.<br>
+                Het totaalbedrag dat nodig is.<br>
                 Dit is het bedrag dat over de leden wordt verdeeld op basis van hun gewerkte uren.
                 <br><br>
                 <strong>Schaal:</strong> <br>
-                De schaalfactor bepaalt hoeveel invloed het aantal gewerkte uren heeft op het bedrag dat een lid moet betalen.<br>
+                De schaalfactor bepaalt hoeveel invloed het aantal gewerkte uren heeft op het bedrag dat een lid moet
+                betalen.<br>
                 Hoe meer uren een lid heeft gewerkt, hoe minder dat lid hoeft te betalen.<br>
                 Dit zorgt ervoor dat leden die meer bijdragen door werk, minder betalen.
                 <br><br>
                 <strong>Min. €:</strong> <br>
                 Het minimaal te betalen bedrag voor elk lid. <br>
-                Dit zorgt ervoor dat niemand minder betaalt dan dit bedrag, <br>
-                zelfs als hun aandeel op basis van gewerkte uren lager is dan dit minimum. <br>
-                Dit bedrag wordt afgedwongen als een vloer voor de betalingen.
             </p>
             <button class="mt-2 text-blue-500 cursor-pointer" wire:click="toggleInfo()">Sluiten</button>
         </div>

@@ -35,6 +35,14 @@
     @auth
         @if(auth()->user()->is_super_admin)
             <flux:navlist variant="outline">
+                <flux:navlist.item icon="document-text" :href="route('logs')" :current="request()->routeIs('logs')"
+                                   wire:navigate>
+                    {{ __('Logs') }}
+                </flux:navlist.item>
+                <flux:navlist.item icon="cog-8-tooth" :href="route('app-settings')" :current="request()->routeIs('app-settings')"
+                                   wire:navigate>
+                    {{ __('App Settings') }}
+                </flux:navlist.item>
                 <flux:navlist.item icon="user-plus" :href="route('admin')" :current="request()->routeIs('admin')"
                                    wire:navigate>
                     {{ __('Gebruiker Beheer') }}

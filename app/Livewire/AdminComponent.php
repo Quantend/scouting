@@ -8,12 +8,14 @@ use App\Models\User;
 class AdminComponent extends Component
 {
     public $users;
-    public $searchEmail;
+    public $search;
     public $confirmDelete;
     public $confirmDeleteUser;
     public $confirmSuperAdmin;
     public $selectedUserId;
     public $selectedUserName;
+    public $showDeleted = false;
+
 
     public function mount()
     {
@@ -32,14 +34,24 @@ class AdminComponent extends Component
     {
         $query = User::query();
 
-        // If there's a search term, filter by email
-        if ($this->searchEmail) {
-            $query->where('email', 'like', '%' . $this->searchEmail . '%');
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('email', 'like', '%' . $this->search . '%')
+                    ->orWhere('name', 'like', '%' . $this->search . '%');
+            });
         }
 
-        // Fetch all users except the one with id 1
+        if ($this->showDeleted) {
+            $query->where('is_deleted', true);
+        } else {
+            $query->where(function ($q) {
+                $q->whereNull('is_deleted')->orWhere('is_deleted', false);
+            });
+        }
+
         $this->users = $query->get();
     }
+
 
     // This method will handle the toggling of the 'is_admin' status
     public function updateAdminStatus($userId, $isAdmin)
@@ -47,11 +59,19 @@ class AdminComponent extends Component
         $user = User::find($userId);
 
         if ($user) {
-            $user->is_admin = $isAdmin; // Set the 'is_admin' value to the checkbox status
-            $user->save();
+            // Alleen toestaan als admin status wordt ingeschakeld
+            if (!$user->is_admin && $isAdmin) {
+                $user->is_admin = true;
+                $user->save();
+            }
 
-            // Refresh user list after update
-            $this->users = User::all();
+            // Super_admin mag nooit worden aangepast via deze functie
+            if ($user->is_super_admin) {
+                $user->is_admin = true;
+            }
+
+            // Refresh user list
+            $this->updateUserList();
         }
     }
 
@@ -72,7 +92,7 @@ class AdminComponent extends Component
             $user->save();
 
             // Refresh user list after update
-            $this->users = User::all();
+            $this->updateUserList();
         }
 
         $this->confirmSuperAdmin = false;
@@ -113,7 +133,7 @@ class AdminComponent extends Component
             }
 
             // Refresh user list after update/deletion
-            $this->users = User::all();
+            $this->updateUserList();
         } else {
             session()->flash('error', 'User not found.');
         }
@@ -148,9 +168,36 @@ class AdminComponent extends Component
         $this->confirmDelete = false;
 
         // Refresh user list after deletion
-        $this->users = User::all();
+        $this->updateUserList();
 
         session()->flash('message', 'Deleted all non admin users.');
+    }
+
+    public function toggleShowDeleted()
+    {
+        $this->showDeleted = !$this->showDeleted;
+        $this->updateUserList();
+    }
+
+    public function restoreUser($userId)
+    {
+        $user = User::find($userId);
+
+        if ($user && $user->is_deleted) {
+            $user->is_deleted = false;
+            $user->save();
+
+            session()->flash('message', 'Gebruiker succesvol hersteld.');
+            $this->updateUserList();
+        } else {
+            session()->flash('error', 'Kan gebruiker niet herstellen.');
+        }
+    }
+
+    public function clearSearch()
+    {
+        $this->search = '';
+        $this->updateUserList();
     }
 
     public function render()

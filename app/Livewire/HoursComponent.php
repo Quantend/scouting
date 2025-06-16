@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Log;
 use App\Models\Member;
 use App\Models\Task;
-use App\Models\Hours; // Assuming you have an Hour model
+use App\Models\Hours;
 
 class HoursComponent extends Component
 {

@@ -17,7 +17,7 @@ class ChartComponent extends Component
     public $viewChart = false;
     public $showInfo = false;
     public $scalingFactor = 1; // Default: 1 (Higher = Stronger penalty for low hours)
-    public $basePayment = 50; // Minimum amount everyone pays
+    public $basePayment = 0; // Minimum amount everyone pays
 
     public function mount()
     {

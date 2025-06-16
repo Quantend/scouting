@@ -18,20 +18,20 @@
         <!-- Zoekveld -->
         <input
             type="text"
-            wire:model.debounce.500ms="searchEmail"
-            placeholder="Zoeken op e-mail"
+            wire:model.debounce.500ms="search"
+            placeholder="Zoeken op naam of e-mail"
             class="border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"
         />
 
         <!-- Wis knop -->
-        @if($searchEmail)
+        @if($search)
             <button
-                wire:click="$set('searchEmail', '')"
-                class="cursor-pointer text-gray-500 hover:text-gray-800 focus:outline-none"
+                wire:click="clearSearch"
+                class="cursor-pointer bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 focus:outline-none"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
+                <span class="flex items-center space-x-2">
+                    <span>Reset</span>
+                </span>
             </button>
         @endif
 
@@ -40,22 +40,29 @@
             wire:click="updateUserList"
             class="cursor-pointer bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 focus:outline-none"
         >
-        <span class="flex items-center space-x-2">
-            <span>Zoeken</span>
-        </span>
+            <span class="flex items-center space-x-2">
+                <span>Zoeken</span>
+            </span>
         </button>
     </div>
 
-    <div class="flex justify-center mb-4">
+    <div class="flex flex-col sm:flex-row justify-center mb-4 gap-4">
         <button
             wire:click="confirmDeleteAll"
             class="cursor-pointer bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-red-700 transition duration-300 ease-in-out">
             Verwijder alle niet-beheerders
         </button>
+        <button
+            wire:click="toggleShowDeleted"
+            class="cursor-pointer bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-600 transition duration-300 ease-in-out">
+            {{ $showDeleted ? 'Toon actieve gebruikers' : 'Toon verwijderde gebruikers' }}
+        </button>
     </div>
 
+
     <div class="overflow-x-auto">
-        <table class="w-full border-collapse border border-gray-300 hidden sm:table dark:bg-gray-700 dark:border-gray-600">
+        <table
+            class="w-full border-collapse border border-gray-300 hidden sm:table dark:bg-gray-700 dark:border-gray-600">
             <thead>
             <tr class="bg-gray-200 dark:bg-gray-800">
                 <th class="border p-2 text-center text-gray-700 dark:text-white">Naam</th>
@@ -71,20 +78,20 @@
                     <td class="p-2 text-center text-gray-700 dark:text-white">{{ $user->name }}</td>
                     <td class="p-2 text-center text-gray-700 dark:text-white">{{ $user->email }}</td>
                     <td class="p-2 text-center text-gray-700 dark:text-white">
-                        @if($user->is_super_admin)
+                        @if($user->is_super_admin || $user->is_admin)
                             Ja
                         @else
-                            <input type="checkbox"
-                                   wire:change="updateAdminStatus({{ $user->id }}, $event.target.checked)"
-                                   @checked($user->is_admin)
-                                   class="form-checkbox h-5 w-5 text-green-500 cursor-pointer">
+                            <button wire:click="updateAdminStatus({{ $user->id }}, true)" class="cursor-pointer">
+                                <flux:icon icon="x-mark" class="text-red-500"></flux:icon>
+                            </button>
                         @endif
                     </td>
                     <td class="p-2 text-center text-gray-700 dark:text-white">
                         @if($user->is_super_admin)
                             Ja
                         @else
-                            <button wire:click="confirmSuperAdminStatus({{ $user->id }}, '{{ $user->name }}')" class="cursor-pointer">
+                            <button wire:click="confirmSuperAdminStatus({{ $user->id }}, '{{ $user->name }}')"
+                                    class="cursor-pointer">
                                 <flux:icon icon="x-mark" class="text-red-500"></flux:icon>
                             </button>
                         @endif
@@ -92,6 +99,11 @@
                     <td class="p-2 text-center">
                         @if($user->is_super_admin)
                             Geen
+                        @elseif($showDeleted)
+                            <button wire:click="restoreUser({{ $user->id }})"
+                                    class="cursor-pointer bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                                <flux:icon icon="arrow-uturn-left" class="text-white"></flux:icon>
+                            </button>
                         @else
                             <button wire:click="deleteUser({{ $user->id }})"
                                     class="cursor-pointer bg-red-500 text-white p-2 rounded hover:bg-red-600">
@@ -99,6 +111,7 @@
                             </button>
                         @endif
                     </td>
+
                 </tr>
             @endforeach
             </tbody>
@@ -111,20 +124,20 @@
                     <p><strong>Naam:</strong> {{ $user->name }}</p>
                     <p><strong>E-mail:</strong> {{ $user->email }}</p>
                     <p class="flex items-center gap-2"><strong>Beheerder:</strong>
-                        @if($user->is_super_admin)
+                        @if($user->is_super_admin || $user->is_admin)
                             Ja
                         @else
-                            <input type="checkbox"
-                                   wire:change="updateAdminStatus({{ $user->id }}, $event.target.checked)"
-                                   @checked($user->is_admin)
-                                   class="form-checkbox h-5 w-5 text-green-500 cursor-pointer">
+                            <button wire:click="updateAdminStatus({{ $user->id }}, true)" class="cursor-pointer">
+                                <flux:icon icon="x-mark" class="text-red-500"></flux:icon>
+                            </button>
                         @endif
                     </p>
                     <p class="flex items-center"><strong>Super Beheerder:</strong>
                         @if($user->is_super_admin)
                             Ja
                         @else
-                            <button wire:click="confirmSuperAdminStatus({{ $user->id }}, '{{ $user->name }}')" class="cursor-pointer">
+                            <button wire:click="confirmSuperAdminStatus({{ $user->id }}, '{{ $user->name }}')"
+                                    class="cursor-pointer">
                                 <flux:icon icon="x-mark" class="text-red-500"></flux:icon>
                             </button>
                         @endif
@@ -132,8 +145,13 @@
                     <p class="flex items-center gap-2"><strong>Acties:</strong>
                         @if($user->is_super_admin)
                             Geen
+                        @elseif($showDeleted)
+                            <button wire:click="restoreUser({{ $user->id }})"
+                                    class="cursor-pointer bg-green-500 text-white p-1 rounded hover:bg-green-600">
+                                <flux:icon icon="arrow-uturn-left" class="text-white"></flux:icon>
+                            </button>
                         @else
-                            <button wire:click="confirmDeleteSelectedUser({{ $user->id }}, '{{ $user->name }}')"
+                            <button wire:click="deleteUser({{ $user->id }})"
                                     class="cursor-pointer bg-red-500 text-white p-1 rounded hover:bg-red-600">
                                 <flux:icon icon="trash" class="text-white"></flux:icon>
                             </button>
@@ -171,7 +189,8 @@
     @if($confirmDelete)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Weet je zeker dat je alle niet-beheerder gebruikers wilt verwijderen?</h3>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Weet je zeker dat je alle niet-beheerder
+                    gebruikers wilt verwijderen?</h3>
                 <div class="flex justify-between">
                     <button
                         wire:click="deleteAllNonAdminUsers()"

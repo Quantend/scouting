@@ -1,6 +1,8 @@
 <?php
 
+use App\Livewire\AppSettingsComponent;
 use App\Livewire\HoursComponent;
+use App\Livewire\LogsComponent;
 use App\Livewire\TaskComponent;
 use App\Livewire\MemberComponent;
 use App\Livewire\AdminComponent;
@@ -8,6 +10,7 @@ use App\Livewire\ViewHoursComponent;
 use App\Livewire\ChartComponent;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
@@ -38,6 +41,12 @@ Route::group(['middleware' => function ($request, $next) {
     return $next($request);
 }], function () {
     Route::get('admin', AdminComponent::class)->name('admin');
+    Route::get('logs', LogsComponent::class)->name('logs');
+    Route::get('app-settings', AppSettingsComponent::class)->name('app-settings');
+    Route::post('/send-db-email', function () {
+        Artisan::call('email:send-db');
+        return back()->with('message', 'Command email:send-db executed.');
+    })->name('send-db-email');
 });
 
 Route::middleware(['auth'])->group(function () {
