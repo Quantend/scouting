@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
 new class extends Component {
     public string $current_password = '';
@@ -27,8 +28,16 @@ new class extends Component {
             throw $e;
         }
 
-        Auth::user()->update([
+        $user = Auth::user();
+
+        $user->update([
             'password' => Hash::make($validated['password']),
+        ]);
+
+        Log::create([
+            'user_id' => $user->id,
+            'type' => 'Settings',
+            'log' => 'User changed password',
         ]);
 
         $this->reset('current_password', 'password', 'password_confirmation');

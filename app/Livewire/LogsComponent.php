@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Log;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -48,6 +49,14 @@ class LogsComponent extends Component
 
     public function clearAllLogs()
     {
+        // Eerst backup via mail versturen
+        try {
+            Artisan::call('email:send-db');
+        } catch (\Exception $e) {
+            session()->flash('message', 'Fout bij versturen van backup: ' . $e->getMessage());
+            return;
+        }
+
         $user = Auth::user();
         // Optional: wrap in a transaction for safety
         DB::transaction(function () use ($user) {
@@ -56,7 +65,7 @@ class LogsComponent extends Component
             // Recreate a log stating that logs were cleared
             Log::create([
                 'user_id' => $user->id,
-                'type' => 'Cleared Logs',
+                'type' => 'Admin',
                 'log' => 'All logs were cleared by ' . ($user->name ?? 'unknown user'),
             ]);
         });

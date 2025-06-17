@@ -29,11 +29,27 @@
     @if ($resetAppConfirm)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div class="bg-white p-4 rounded shadow w-full max-w-xs text-center">
-                Weet je het zeker?<br>
+                <div class="text-base font-semibold">Wat wil je verwijderen?</div>
+                <div class="text-left space-y-2">
+                    <div class="text-sm text-gray-600">
+                        Voor meer opties selecteer eerst Logs of Uren
+                    </div>
+                    <label><input type="checkbox" wire:model.live.debounce="deleteLogs"> Logs</label><br>
+                    <label><input type="checkbox" wire:model.live.debounce="deleteHours"> Uren</label><br>
+                    @if($deleteHours)
+                        <label><input type="checkbox" wire:model.live.debounce="deleteMembers"> Leden</label><br>
+                        <label><input type="checkbox" wire:model.live.debounce="deleteTasks"> Klussen</label><br>
+                    @endif
+                    @if($deleteLogs)
+                        <label><input type="checkbox" wire:model.live.debounce="deleteUsers"> Gebruikers (geen super
+                            admins)</label>
+                    @endif
+                </div>
                 <div class="mt-3 flex justify-center gap-2">
-                    <button wire:click="confirmResetApp2" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Ja</button>
-                    <button wire:click="confirmResetWithUser" class="bg-red-800 text-white px-3 py-1 rounded text-sm">Ja, inclusief users</button>
-                    <button wire:click="resetInputFields" class="bg-gray-300 px-3 py-1 rounded text-sm">Nee</button>
+                    <button wire:click="confirmResetApp2" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Ja
+                    </button>
+                    <button wire:click="resetInputFields" class="bg-gray-300 px-3 py-1 rounded text-sm">Annuleer
+                    </button>
                 </div>
             </div>
         </div>
@@ -41,14 +57,16 @@
 
     @if ($resetAppConfirm2)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div class="bg-white p-4 rounded shadow w-full max-w-xs text-center">
-                Zeker weten? Alles wordt verwijderd! @if($deleteUsers) Inclusief alle non super admin gebruikers. @endif<br>
+            <div class="bg-white p-4 rounded shadow w-full max-w-sm text-center space-y-4">
                 <div class="mt-3 flex justify-center gap-2">
-                    <button wire:click="resetApp" class="bg-red-700 text-white px-3 py-1 rounded text-sm">Ja, verwijder</button>
+                    <button wire:click="resetApp" class="bg-red-700 text-white px-3 py-1 rounded text-sm">Ja,
+                        verwijder
+                    </button>
                     <button wire:click="resetInputFields" class="bg-gray-300 px-3 py-1 rounded text-sm">Nee</button>
-                    <div wire:loading class="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                        Verwijderen bezig...
-                    </div>
+                </div>
+                <div class="text-base font-semibold">Weet je het zeker?</div>
+                <div wire:loading class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                    Verwijderen bezig...
                 </div>
             </div>
         </div>

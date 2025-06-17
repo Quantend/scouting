@@ -3,6 +3,7 @@
 use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
 new class extends Component {
     public string $password = '';
@@ -23,9 +24,18 @@ new class extends Component {
             $user->is_deleted = 1;
             $user->save();
 
+            Log::create([
+                'user_id' => $user->id,
+                'type' => 'Settings',
+                'log' => 'User marked himself as deleted',
+            ]);
+
             // Log out the user
             $logout($user);
         } else {
+            // First delete logs related to this user
+            Log::where('user_id', $user->id)->delete();
+
             // Permanently delete the user
             tap($user, $logout(...))->delete();
         }

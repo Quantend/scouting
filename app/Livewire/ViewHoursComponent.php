@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Hours;
@@ -11,21 +12,21 @@ use App\Models\Task;
 
 class ViewHoursComponent extends Component
 {
-    public $members, $tasks, $hours, $hoursInput;
+    use WithPagination;
+
+    public $members, $tasks;
     public $selectedMember = null, $selectedTask = null, $selectedDate = null;
     public $hourToDelete = null;
 
-    // Fields for editing
-    public $editHourId, $editMemberId, $editTaskId, $editHours, $editDate;
+    // Editing fields
+    public $editHourId, $editMemberId, $editTaskId, $editHours, $editDate, $hoursInput;
+
+    protected $paginationTheme = 'tailwind'; // Optional: use 'bootstrap' if preferred
 
     public function mount()
     {
-        // Fetch all members and tasks to populate the dropdowns
         $this->members = Member::all();
         $this->tasks = Task::all();
-
-        // Initially load all hours
-        $this->hours = Hours::with(['member', 'task'])->get()->sortByDesc('date');
     }
 
     public function updatedHoursInput($value)
@@ -42,15 +43,8 @@ class ViewHoursComponent extends Component
 
     public function render()
     {
-        return view('livewire.view-hours-component');
-    }
+        $query = Hours::with(['member', 'task'])->orderByDesc('date');
 
-    // Filter hours based on member and task selection
-    public function filterHours()
-    {
-        $query = Hours::query();
-
-        // Apply filters if selected
         if ($this->selectedMember) {
             $query->where('member_id', $this->selectedMember);
         }
@@ -63,8 +57,15 @@ class ViewHoursComponent extends Component
             $query->whereDate('date', $this->selectedDate);
         }
 
-        // Eager load the member and task relationships
-        $this->hours = $query->with(['member', 'task'])->get()->sortByDesc('date');
+        $hours = $query->paginate(10);
+
+        return view('livewire.view-hours-component', ['hours' => $hours]);
+    }
+
+    // Filter hours based on member and task selection
+    public function filterHours()
+    {
+        $this->resetPage();
     }
 
     public function resetFilters()
@@ -72,8 +73,7 @@ class ViewHoursComponent extends Component
         $this->selectedMember = null;
         $this->selectedTask = null;
         $this->selectedDate = null;
-
-        $this->hours = Hours::query()->get();
+        $this->resetPage();
     }
 
     // Edit a specific hour entry

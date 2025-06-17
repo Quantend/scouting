@@ -50,6 +50,9 @@
         <p class="text-center mt-4 text-gray-600 dark:text-gray-300">Geen uren gevonden voor de geselecteerde
             filters.</p>
     @else
+        <div class="">
+            {{ $hours->links() }}
+        </div>
         <div class="w-full overflow-x-scroll">
             <table class="w-full mt-4 border dark:bg-gray-700 dark:border-gray-600">
                 <thead>
@@ -84,6 +87,9 @@
                 @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="mt-4">
+            {{ $hours->links() }}
         </div>
     @endif
 

@@ -30,6 +30,8 @@
             <div class="w-1/3">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Totaal €</label>
                 <input
+                    type="number"
+                    maxlength="6"
                     class="w-full p-2 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     wire:model="requiredMoney">
             </div>
@@ -48,6 +50,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Min. €</label>
                 <input
                     type="number"
+                    maxlength="6"
                     class="w-full p-2 border rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     wire:model="basePayment">
             </div>

@@ -14,17 +14,16 @@ class AppSettingsComponent extends Component
 {
     public $resetAppConfirm = false;
     public $resetAppConfirm2 = false;
+    public $deleteLogs = false;
+    public $deleteHours = false;
+    public $deleteMembers = false;
+    public $deleteTasks = false;
     public $deleteUsers = false;
+
 
     public function confirmResetApp()
     {
         $this->resetAppConfirm = true;
-    }
-
-    public function confirmResetWithUser()
-    {
-        $this->resetAppConfirm2 = true;
-        $this->deleteUsers = true;
     }
 
     public function confirmResetApp2()
@@ -35,10 +34,17 @@ class AppSettingsComponent extends Component
 
     public function resetInputFields()
     {
-        $this->resetAppConfirm = false;
-        $this->resetAppConfirm2 = false;
-        $this->deleteUsers = false;
+        $this->reset([
+            'resetAppConfirm',
+            'resetAppConfirm2',
+            'deleteLogs',
+            'deleteHours',
+            'deleteMembers',
+            'deleteTasks',
+            'deleteUsers',
+        ]);
     }
+
 
     public function sendDbEmail()
     {
@@ -57,18 +63,27 @@ class AppSettingsComponent extends Component
         }
 
 
-        // Dan pas alles verwijderen in juiste volgorde
-        // Volgorde is belangrijk ivm foreign keys
-        Log::truncate();
-        Hours::truncate();
-        Member::truncate();
-        Task::truncate();
+        if ($this->deleteLogs) {
+            Log::truncate();
+        }
+
+        if ($this->deleteHours) {
+            Hours::truncate();
+        }
+
+        if ($this->deleteMembers) {
+            Member::truncate();
+        }
+
+        if ($this->deleteTasks) {
+            Task::truncate();
+        }
 
         if ($this->deleteUsers){
             User::where('is_super_admin', false)->delete();
         }
 
-        session()->flash('message', 'Alle data is succesvol verwijderd en backup van database is verstuurd.');
+        session()->flash('message', 'Geselecteerde data is verwijderd. Backup is verstuurd.');
         $this->resetInputFields();
     }
 

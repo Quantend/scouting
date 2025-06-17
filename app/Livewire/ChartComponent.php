@@ -23,7 +23,7 @@ class ChartComponent extends Component
     {
         $this->totalMembers = Member::count();
         $this->totalHoursAll = Hours::sum('hours');
-        $this->requiredMoney = 1000;
+        $this->requiredMoney = 500;
         $this->totalRequiredMoney = $this->requiredMoney * $this->totalMembers;
         $this->calculateChart();
     }

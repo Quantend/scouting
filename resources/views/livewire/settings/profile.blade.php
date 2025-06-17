@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
+use App\Models\Log;
 
 new class extends Component {
     public string $name = '';
@@ -25,8 +26,12 @@ new class extends Component {
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
+        $oldName = $user->name;
+        $oldEmail = $user->email;
 
         $validated = $this->validate([
+            'name' => ['required', 'string', 'max:255'],
+
             'email' => [
                 'required',
                 'string',
@@ -37,9 +42,6 @@ new class extends Component {
             ],
         ]);
 
-        // Force the original name from the authenticated user
-        $validated['name'] = $user->name;
-
         $user->fill($validated);
 
         if ($user->isDirty('email')) {
@@ -48,9 +50,13 @@ new class extends Component {
 
         $user->save();
 
+        Log::create([
+            'user_id' => $user->id,
+            'type' => 'Settings',
+            'log' => 'Updated name: ' . $oldName . ' → ' . $user->name . ' email: ' . $oldEmail . ' → ' . $user->email,
+        ]);
         $this->dispatch('profile-updated', name: $user->name);
     }
-
 
     /**
      * Send an email verification notification to the current user.
@@ -76,8 +82,7 @@ new class extends Component {
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <p>(voor logging purposes kan de naam niet worden aangepast (of vraag Dylan als het echt nodig is))</p>
-            <flux:input disabled wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />

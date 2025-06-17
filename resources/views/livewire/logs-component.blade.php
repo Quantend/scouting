@@ -42,6 +42,9 @@
             {{ session('message') }}
         </div>
     @endif
+    <div wire:loading wire:target="clearAllLogs" class="font-semibold text-gray-600 text-center">
+        Sending database and deleting logs...
+    </div>
 
     {{-- Clear Logs Button --}}
     <div class="flex justify-center mb-4">

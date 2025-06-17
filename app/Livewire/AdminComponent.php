@@ -3,7 +3,10 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Log;
+
 
 class AdminComponent extends Component
 {
@@ -19,14 +22,6 @@ class AdminComponent extends Component
 
     public function mount()
     {
-        $user = User::where('email', 'dylanbroens2003@gmail.com')->first();
-        if ($user) {
-            if ($user->is_admin = false) {
-                $user->is_admin = true;
-                $user->save();
-            }
-        }
-
         $this->updateUserList(); // Call method to load the user list on mount
     }
 
@@ -63,6 +58,12 @@ class AdminComponent extends Component
             if (!$user->is_admin && $isAdmin) {
                 $user->is_admin = true;
                 $user->save();
+
+                Log::create([
+                    'user_id' => Auth::user(),
+                    'type' => 'Admin',
+                    'log' => 'Made user admin: ' . ($user->name ?? 'unknown user'),
+                ]);
             }
 
             // Super_admin mag nooit worden aangepast via deze functie
@@ -90,6 +91,12 @@ class AdminComponent extends Component
             $user->is_admin = true;
             $user->is_super_admin = true;
             $user->save();
+
+            Log::create([
+                'user_id' => Auth::user(),
+                'type' => 'Admin',
+                'log' => 'Made user super admin: ' . ($user->name ?? 'unknown user'),
+            ]);
 
             // Refresh user list after update
             $this->updateUserList();
@@ -124,8 +131,20 @@ class AdminComponent extends Component
                 $user->is_deleted = true;
                 $user->save();
 
+                Log::create([
+                    'user_id' => Auth::user(),
+                    'type' => 'Admin',
+                    'log' => 'Marked user as deleted: ' . ($user->name ?? 'unknown user'),
+                ]);
+
                 session()->flash('message', 'Admin user marked as deleted.');
             } else {
+                Log::create([
+                    'user_id' => Auth::user(),
+                    'type' => 'Admin',
+                    'log' => 'Deleted user: ' . ($user->name ?? 'unknown user'),
+                ]);
+
                 // Delete non-admin users normally
                 $user->delete();
 
@@ -171,6 +190,12 @@ class AdminComponent extends Component
 
         $this->confirmDelete = false;
 
+        Log::create([
+            'user_id' => Auth::user(),
+            'type' => 'Admin',
+            'log' => 'Deleted all non admin users',
+        ]);
+
         // Refresh user list after deletion
         $this->updateUserList();
 
@@ -190,6 +215,12 @@ class AdminComponent extends Component
         if ($user && $user->is_deleted) {
             $user->is_deleted = false;
             $user->save();
+
+            Log::create([
+                'user_id' => Auth::user(),
+                'type' => 'Admin',
+                'log' => 'Restored user: ' . ($user->name ?? 'unknown user'),
+            ]);
 
             session()->flash('message', 'Gebruiker succesvol hersteld.');
             $this->updateUserList();
