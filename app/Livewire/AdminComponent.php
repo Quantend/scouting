@@ -60,7 +60,7 @@ class AdminComponent extends Component
                 $user->save();
 
                 Log::create([
-                    'user_id' => Auth::user(),
+                    'user_id' => Auth::user()->id,
                     'type' => 'Admin',
                     'log' => 'Made user admin: ' . ($user->name ?? 'unknown user'),
                 ]);
@@ -93,7 +93,7 @@ class AdminComponent extends Component
             $user->save();
 
             Log::create([
-                'user_id' => Auth::user(),
+                'user_id' => Auth::user()->id,
                 'type' => 'Admin',
                 'log' => 'Made user super admin: ' . ($user->name ?? 'unknown user'),
             ]);
@@ -132,7 +132,7 @@ class AdminComponent extends Component
                 $user->save();
 
                 Log::create([
-                    'user_id' => Auth::user(),
+                    'user_id' => Auth::user()->id,
                     'type' => 'Admin',
                     'log' => 'Marked user as deleted: ' . ($user->name ?? 'unknown user'),
                 ]);
@@ -140,7 +140,7 @@ class AdminComponent extends Component
                 session()->flash('message', 'Admin user marked as deleted.');
             } else {
                 Log::create([
-                    'user_id' => Auth::user(),
+                    'user_id' => Auth::user()->id,
                     'type' => 'Admin',
                     'log' => 'Deleted user: ' . ($user->name ?? 'unknown user'),
                 ]);
@@ -191,7 +191,7 @@ class AdminComponent extends Component
         $this->confirmDelete = false;
 
         Log::create([
-            'user_id' => Auth::user(),
+            'user_id' => Auth::user()->id,
             'type' => 'Admin',
             'log' => 'Deleted all non admin users',
         ]);
@@ -217,7 +217,7 @@ class AdminComponent extends Component
             $user->save();
 
             Log::create([
-                'user_id' => Auth::user(),
+                'user_id' => Auth::user()->id,
                 'type' => 'Admin',
                 'log' => 'Restored user: ' . ($user->name ?? 'unknown user'),
             ]);
