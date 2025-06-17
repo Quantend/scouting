@@ -13,7 +13,7 @@ class SendDBEmail extends Command
      *
      * @var string
      */
-    protected $signature = 'email:send-db';
+    protected $signature = 'email:send-db {context=default}';
 
     /**
      * The console command description.
@@ -27,10 +27,11 @@ class SendDBEmail extends Command
      */
     public function handle()
     {
+        $context = $this->argument('context');
         $recipient = 'dylansbackups@gmail.com';
 
-        Mail::to($recipient)->send(new DBEmail());
+        Mail::to($recipient)->send(new DBEmail($context));
 
-        $this->info("SQLite database backup sent to $recipient.");
+        $this->info("SQLite database backup (context: $context) sent to $recipient.");
     }
 }

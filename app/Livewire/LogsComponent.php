@@ -49,15 +49,24 @@ class LogsComponent extends Component
 
     public function clearAllLogs()
     {
+        $user = Auth::user();
         // Eerst backup via mail versturen
         try {
-            Artisan::call('email:send-db');
+            // Create a log before sending the database stating that the logs were cleared
+            Log::create([
+                'user_id' => $user->id,
+                'type' => 'Admin',
+                'log' => 'Start clearing logs',
+            ]);
+
+            Artisan::call('email:send-db', [
+                'context' => 'clearlogs',
+            ]);
         } catch (\Exception $e) {
             session()->flash('message', 'Fout bij versturen van backup: ' . $e->getMessage());
             return;
         }
 
-        $user = Auth::user();
         // Optional: wrap in a transaction for safety
         DB::transaction(function () use ($user) {
             Log::truncate(); // This deletes all rows efficiently
@@ -66,7 +75,7 @@ class LogsComponent extends Component
             Log::create([
                 'user_id' => $user->id,
                 'type' => 'Admin',
-                'log' => 'All logs were cleared by ' . ($user->name ?? 'unknown user'),
+                'log' => 'All logs were cleared.',
             ]);
         });
 

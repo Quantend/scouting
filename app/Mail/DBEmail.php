@@ -11,12 +11,14 @@ class DBEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public string $context;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(string $context = 'default')
     {
-        //
+        $this->context = $context;
     }
 
     /**
@@ -28,6 +30,7 @@ class DBEmail extends Mailable
 
         return $this->subject('SQLite Database Backup')
             ->view('emails.backupDB') // Your email view
+            ->with(['context' => $this->context])
             ->attach($databasePath, [
                 'as' => 'backup.sqlite', // Name of the attachment
                 'mime' => 'application/x-sqlite3', // Correct MIME type
