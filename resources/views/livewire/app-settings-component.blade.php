@@ -28,10 +28,10 @@
 
     @if ($resetAppConfirm)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div class="bg-white p-4 rounded shadow w-full max-w-xs text-center">
+            <div class="bg-white p-4 rounded shadow w-full max-w-xs text-center dark:bg-gray-600 dark:border-gray-500">
                 <div class="text-base font-semibold">Wat wil je verwijderen?</div>
                 <div class="text-left space-y-2">
-                    <div class="text-sm text-gray-600">
+                    <div class="text-sm text-gray-600 dark:text-white">
                         Voor meer opties selecteer eerst Logs of Uren
                     </div>
                     <label><input type="checkbox" wire:model.live.debounce="deleteLogs"> Logs</label><br>
@@ -57,7 +57,7 @@
 
     @if ($resetAppConfirm2)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div class="bg-white p-4 rounded shadow w-full max-w-sm text-center space-y-4">
+            <div class="bg-white p-4 rounded shadow w-full max-w-sm text-center space-y-4 dark:bg-gray-600 dark:border-gray-500">
                 <div class="mt-3 flex justify-center gap-2">
                     <button wire:click="resetApp" class="bg-red-700 text-white px-3 py-1 rounded text-sm">Ja,
                         verwijder

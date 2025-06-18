@@ -169,7 +169,7 @@
     <!-- Confirmation Modals -->
     @if($confirmSuperAdmin)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4 dark:bg-gray-600 dark:border-gray-500">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Weet je zeker dat je gebruiker: "{{ $selectedUserName }}" een superbeheerder wilt maken?
                 </h3>
@@ -192,7 +192,7 @@
     <!-- Delete Confirmation -->
     @if($confirmDelete)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4 dark:bg-gray-600 dark:border-gray-500">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Weet je zeker dat je alle niet-beheerder
                     gebruikers wilt verwijderen?</h3>
                 <div class="flex justify-between">
@@ -214,7 +214,7 @@
     <!-- Confirm Delete User -->
     @if($confirmDeleteUser)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4">
+            <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-w-sm space-y-4 dark:bg-gray-600 dark:border-gray-500">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Weet je zeker dat je gebruiker: "{{ $selectedUserName }}" wilt verwijderen?
                 </h3>

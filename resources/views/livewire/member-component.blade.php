@@ -63,7 +63,7 @@
     <!-- Deletion Confirmation Modal -->
     @if ($memberToDelete)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white p-6 rounded shadow-lg w-96 dark:bg-gray-600 dark:border-gray-500">
                 <h3 class="text-lg font-semibold mb-4">Weet je zeker dat je dit lid wilt verwijderen?</h3>
                 <p class="mb-4">Deze actie kan niet ongedaan worden gemaakt.</p>
                 <div class="flex justify-between">
@@ -83,7 +83,7 @@
     <!-- Modale Bewerkingspopup -->
     @if ($isEdit)
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white p-6 rounded shadow-lg w-96">
+            <div class="bg-white p-6 rounded shadow-lg w-96 dark:bg-gray-600 dark:border-gray-500">
                 <h3 class="text-lg font-semibold mb-4">Bewerk Lid</h3>
 
                 <form wire:submit.prevent="update">
@@ -113,7 +113,7 @@
     <!-- Weergave van kulssen en totaal aantal uren -->
     @if ($viewTasks)
         <div class="mt-4">
-            <h3 class="mb-4 text-xl font-semibold text-gray-700 dark:text-white">Klussen en Totaal Uren
+            <h3 class="mb-4 text-xl font-semibold text-gray-700 dark:text-white dark:bg-gray-600 dark:border-gray-500">Klussen en Totaal Uren
                 voor {{$nameTasks}}</h3>
             <button wire:click="hideTasks()"
                     class="cursor-pointer bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Verberg Klussen

@@ -22,6 +22,7 @@ class LogsComponent extends Component
         'user' => '',
         'date' => '',
     ];
+    public $confirmClearLogs = false;
 
     public function applyFilters()
     {
@@ -47,6 +48,11 @@ class LogsComponent extends Component
         $this->resetPage();
     }
 
+    public function toggleClearLogs()
+    {
+        $this->confirmClearLogs = !$this->confirmClearLogs;
+    }
+
     public function clearAllLogs()
     {
         $user = Auth::user();
@@ -64,6 +70,7 @@ class LogsComponent extends Component
             ]);
         } catch (\Exception $e) {
             session()->flash('message', 'Fout bij versturen van backup: ' . $e->getMessage());
+            $this->confirmClearLogs = false;
             return;
         }
 
@@ -82,6 +89,7 @@ class LogsComponent extends Component
         session()->flash('message', 'All logs have been cleared.');
 
         $this->resetPage(); // Reset pagination after deletion
+        $this->confirmClearLogs = false;
     }
 
     public function render()
